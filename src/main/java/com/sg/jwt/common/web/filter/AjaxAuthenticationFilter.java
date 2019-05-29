@@ -1,11 +1,9 @@
 package com.sg.jwt.common.web.filter;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sg.jwt.common.model.LoginUser;
 
 public class AjaxAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -26,8 +26,9 @@ public class AjaxAuthenticationFilter extends AbstractAuthenticationProcessingFi
 			throws AuthenticationException, IOException, ServletException {
 		// TODO Auto-generated method stub
 		if (isJson(request)) {
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken("test",
-					"test");
+			LoginUser user = new ObjectMapper().readValue(request.getReader(), LoginUser.class);
+			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+					user.getLoginId(), user.getPassword());
 			return getAuthenticationManager().authenticate(authentication);
 		} else {
 			throw new AccessDeniedException("Don't use content type for " + request.getContentType());

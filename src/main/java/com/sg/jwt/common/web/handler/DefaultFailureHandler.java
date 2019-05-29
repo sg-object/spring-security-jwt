@@ -9,14 +9,15 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.stereotype.Component;
 
 @Component
-public class BaseFailureHandler extends SimpleUrlAuthenticationFailureHandler{
+public class DefaultFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		response.setCharacterEncoding("UTF-8");
-	    response.setContentType("text/html; charset=UTF-8");
-	    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		response.setContentType("text/html; charset=UTF-8");
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		response.getWriter().write("unauthorized error!!!");
 	}
 }

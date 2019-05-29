@@ -1,5 +1,6 @@
 package com.sg.jwt.config;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -11,23 +12,28 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
+import com.sg.jwt.common.jwt.SkipPathRequestMatcher;
 import com.sg.jwt.common.web.filter.AjaxAuthenticationFilter;
-import com.sg.jwt.common.web.handler.BaseFailureHandler;
-import com.sg.jwt.common.web.handler.BaseSuccessHandler;
+import com.sg.jwt.common.web.filter.JwtAuthenticationFilter;
+import com.sg.jwt.common.web.handler.DefaultFailureHandler;
+import com.sg.jwt.common.web.handler.LoginSuccessHandler;
 import com.sg.jwt.common.web.provider.AjaxAuthenticationProvider;
+import com.sg.jwt.common.web.provider.JwtAuthenticationProvider;
 
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
+	private JwtAuthenticationProvider jwtProvider;
+	@Autowired
 	private AjaxAuthenticationProvider ajaxProvider;
 	@Autowired
-	private BaseSuccessHandler baseSuccessHandler;
+	private LoginSuccessHandler baseSuccessHandler;
 	@Autowired
-	private BaseFailureHandler baseFailureHandler;
+	private DefaultFailureHandler baseFailureHandler;
 
 	private static final String ROOT_ENTRY_POINT = "/**";
 	private static final String LOGIN_ENTRY_POINT = "/login";
@@ -42,14 +48,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// TODO Auto-generated method stub
 		http.authorizeRequests().antMatchers(LOGIN_ENTRY_POINT).permitAll().anyRequest().authenticated();
-		http.addFilterBefore(ajaxAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class).csrf().disable()
+		http.addFilterBefore(ajaxAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthenticationFilter(), FilterSecurityInterceptor.class).csrf().disable()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		// TODO Auto-generated method stub
-		auth.authenticationProvider(ajaxProvider);
+		auth.authenticationProvider(ajaxProvider).authenticationProvider(jwtProvider);
 	}
 
 	@Bean
@@ -63,10 +70,23 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
+	public SkipPathRequestMatcher skipPathRequestMatcher() {
+		return new SkipPathRequestMatcher(Arrays.asList(LOGIN_ENTRY_POINT));
+	}
+
+	@Bean
 	public AjaxAuthenticationFilter ajaxAuthenticationFilter() throws Exception {
 		AjaxAuthenticationFilter filter = new AjaxAuthenticationFilter(antPathRequestMatcher());
 		filter.setAuthenticationManager(authenticationManager());
 		filter.setAuthenticationSuccessHandler(baseSuccessHandler);
+		filter.setAuthenticationFailureHandler(baseFailureHandler);
+		return filter;
+	}
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(skipPathRequestMatcher());
+		filter.setAuthenticationManager(authenticationManager());
 		filter.setAuthenticationFailureHandler(baseFailureHandler);
 		return filter;
 	}

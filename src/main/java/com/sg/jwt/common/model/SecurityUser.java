@@ -1,27 +1,30 @@
 package com.sg.jwt.common.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class SecurityUser extends User{
+@JsonInclude(Include.NON_NULL)
+public class SecurityUser extends User {
 
 	private static final long serialVersionUID = -3531439484732724601L;
-	
-	public SecurityUser(LoginUser loginUser) {
+
+	private String name;
+
+	public SecurityUser(LoginUser loginUser, Collection<? extends GrantedAuthority> authorities) {
 		// TODO Auto-generated constructor stub
-		super(loginUser.getLoginId(), loginUser.getPassword(), getGrantedAuthority());
+		super(loginUser.getLoginId(), loginUser.getPassword(), authorities);
+		this.name = loginUser.getName();
 	}
-	
-	private static List<GrantedAuthority> getGrantedAuthority(){
-		List<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
-	    auth.add(new SimpleGrantedAuthority("ROLE_USER"));
-	    return auth;
+
+	public SecurityUser(String loginId, String name, Collection<? extends GrantedAuthority> authorities) {
+		super(loginId, "password", authorities);
+		this.name = name;
 	}
 }
