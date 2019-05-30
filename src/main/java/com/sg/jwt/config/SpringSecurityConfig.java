@@ -47,7 +47,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// TODO Auto-generated method stub
-		http.authorizeRequests().antMatchers(LOGIN_ENTRY_POINT).permitAll().anyRequest().authenticated();
+		http.authorizeRequests().antMatchers(LOGIN_ENTRY_POINT).permitAll().antMatchers(ROOT_ENTRY_POINT)
+				.hasRole("USER");
 		http.addFilterBefore(ajaxAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(jwtAuthenticationFilter(), FilterSecurityInterceptor.class).csrf().disable()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -14,7 +14,7 @@ public class UserServiceImpl implements UserService {
 		user.setLoginId(loginId);
 		user.setPassword("$2a$10$F01fil5fQOQKDLV0Szq.JuUgznfKYnYGxxclEcW0X6d7FPA8PvneK");
 		user.setName("my_name");
-		user.setRoles(new String[] { "ADMIN", "USER" });
+		user.setRoles(new String[] { "ROLE_ADMIN", "ROLE_USER" });
 		return user;
 	}
 }
