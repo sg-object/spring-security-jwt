@@ -9,16 +9,21 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import com.sg.jwt.common.model.LoginUser;
+import com.sg.jwt.common.util.ConvertUtil;
+import com.sg.jwt.common.web.details.TokenDetails;
 import com.sg.jwt.common.web.service.AjaxUserDetailsService;
+import com.sg.jwt.common.web.service.TokenService;
 
 @Component
 public class AjaxAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
 	@Autowired
 	private AjaxUserDetailsService ajaxUserDetailsService;
+	@Autowired
+	private TokenService tokenService;
 
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
@@ -31,6 +36,10 @@ public class AjaxAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 		if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
 			throw new BadCredentialsException("Bad credentials");
 		}
+
+		LoginUser loginUser = ConvertUtil.convertLoginUser(userDetails);
+		TokenDetails tokenDetails = ConvertUtil.convertTokenDetails(authentication.getDetails());
+		setTokens(tokenDetails, loginUser);
 	}
 
 	@Override
@@ -38,5 +47,12 @@ public class AjaxAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 			throws AuthenticationException {
 		// TODO Auto-generated method stub
 		return ajaxUserDetailsService.loadUserByUsername(username);
+	}
+
+	private void setTokens(TokenDetails tokenDetails, LoginUser loginUser) {
+		if (tokenDetails.isAutoLogin()) {
+			tokenDetails.setRefreshToken(tokenService.getRefreshToken(loginUser));
+		}
+		tokenDetails.setToken(tokenService.getJwtToken(loginUser));
 	}
 }

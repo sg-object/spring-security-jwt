@@ -4,6 +4,7 @@ import java.util.Collection;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
+import com.sg.jwt.common.web.details.TokenDetails;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
@@ -16,6 +17,14 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 		super(null);
 		this.principal = null;
 		this.credentials = credentials;
+		setAuthenticated(false);
+	}
+	
+	public JwtAuthenticationToken(Object credentials, TokenDetails tokenDetails){
+		super(null);
+		this.principal = null;
+		this.credentials = credentials;
+		super.setDetails(tokenDetails);
 		setAuthenticated(false);
 	}
 

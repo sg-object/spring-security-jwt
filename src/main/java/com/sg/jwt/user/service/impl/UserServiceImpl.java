@@ -17,4 +17,10 @@ public class UserServiceImpl implements UserService {
 		user.setRoles(new String[] { "ROLE_ADMIN", "ROLE_USER" });
 		return user;
 	}
+	
+	@Override
+	public LoginUser getLoginUserByRefreshToken(String refreshToken) {
+		// TODO Auto-generated method stub
+		return getLoginUser("test");
+	}
 }

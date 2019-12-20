@@ -65,17 +65,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
 	public AntPathRequestMatcher antPathRequestMatcher() {
 		return new AntPathRequestMatcher(LOGIN_ENTRY_POINT, HttpMethod.POST.name());
 	}
 
-	@Bean
 	public SkipPathRequestMatcher skipPathRequestMatcher() {
 		return new SkipPathRequestMatcher(Arrays.asList(LOGIN_ENTRY_POINT));
 	}
 
-	@Bean
 	public AjaxAuthenticationFilter ajaxAuthenticationFilter() throws Exception {
 		AjaxAuthenticationFilter filter = new AjaxAuthenticationFilter(antPathRequestMatcher());
 		filter.setAuthenticationManager(authenticationManager());
@@ -84,11 +81,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		return filter;
 	}
 
-	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
 		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(skipPathRequestMatcher());
 		filter.setAuthenticationManager(authenticationManager());
 		filter.setAuthenticationFailureHandler(baseFailureHandler);
 		return filter;
 	}
+
 }

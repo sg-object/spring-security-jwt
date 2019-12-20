@@ -14,6 +14,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import com.sg.jwt.common.jwt.JwtAuthenticationToken;
 import com.sg.jwt.common.jwt.JwtInfo;
+import com.sg.jwt.common.util.ConvertUtil;
+import com.sg.jwt.common.web.details.TokenDetails;
 
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -22,11 +24,21 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		super(requestMatcher);
 	}
 
+	private TokenDetails getTokenDetails(String token, String refreshToken) {
+		TokenDetails details = new TokenDetails();
+		details.setToken(token);
+		if (refreshToken != null) {
+			details.setRefreshToken(refreshToken);
+		}
+		return details;
+	}
+
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException, IOException, ServletException {
 		// TODO Auto-generated method stub
 		String token = request.getHeader(JwtInfo.TOKEN_NAME);
+		String refreshToken = request.getHeader(JwtInfo.REFRESH_TOKEN);
 
 		if (StringUtils.isEmpty(token)) {
 			response.setCharacterEncoding("UTF-8");
@@ -34,7 +46,8 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		} else {
-			return getAuthenticationManager().authenticate(new JwtAuthenticationToken(token));
+			return getAuthenticationManager()
+					.authenticate(new JwtAuthenticationToken(token, getTokenDetails(token, refreshToken)));
 		}
 	}
 
@@ -45,6 +58,11 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(authResult);
 		SecurityContextHolder.setContext(context);
+		TokenDetails details = ConvertUtil.convertTokenDetails(authResult.getDetails());
+		if(details.isUpdatedToken()){
+			response.setHeader(JwtInfo.TOKEN_NAME, details.getToken());
+			response.setHeader(JwtInfo.REFRESH_TOKEN, details.getRefreshToken());
+		}
 		chain.doFilter(request, response);
 	}
 

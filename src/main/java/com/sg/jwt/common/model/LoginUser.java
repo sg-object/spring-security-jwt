@@ -19,4 +19,14 @@ public class LoginUser {
 	private String email;
 
 	private String[] roles;
+	
+	private boolean autoLogin;
+
+	public LoginUser(){}
+	
+	public LoginUser(SecurityUser securityUser){
+		this.loginId = securityUser.getUsername();
+		this.name = securityUser.getName();
+		this.roles = securityUser.getAuthorities().stream().map(role -> role.getAuthority()).toArray(String[]::new);
+	}
 }

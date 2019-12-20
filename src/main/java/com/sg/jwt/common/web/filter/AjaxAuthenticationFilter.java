@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sg.jwt.common.model.LoginUser;
+import com.sg.jwt.common.web.details.TokenDetails;
 
 public class AjaxAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
@@ -26,9 +27,10 @@ public class AjaxAuthenticationFilter extends AbstractAuthenticationProcessingFi
 			throws AuthenticationException, IOException, ServletException {
 		// TODO Auto-generated method stub
 		if (isJson(request)) {
-			LoginUser user = new ObjectMapper().readValue(request.getReader(), LoginUser.class);
+			LoginUser loginUser = new ObjectMapper().readValue(request.getReader(), LoginUser.class);
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-					user.getLoginId(), user.getPassword());
+					loginUser.getLoginId(), loginUser.getPassword());
+			authentication.setDetails(new TokenDetails(loginUser));
 			return getAuthenticationManager().authenticate(authentication);
 		} else {
 			throw new AccessDeniedException("Don't use content type for " + request.getContentType());

@@ -13,6 +13,10 @@ public abstract class JodaTimeUtil {
 		return LocalDateTime.now().plusDays(days).toDateTime();
 	}
 
+	public static DateTime nowAfterHoursToDate(int hours) {
+		return LocalDateTime.now().plusHours(hours).toDateTime();
+	}
+
 	public static DateTime nowAfterMinutesToDate(int minutes) {
 		return LocalDateTime.now().plusMinutes(minutes).toDateTime();
 	}

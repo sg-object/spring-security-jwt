@@ -1,4 +1,4 @@
-package com.sg.jwt.config;
+package com.sg.jwt;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

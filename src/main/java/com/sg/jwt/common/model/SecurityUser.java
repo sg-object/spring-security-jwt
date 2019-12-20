@@ -16,10 +16,13 @@ public class SecurityUser extends User {
 	private static final long serialVersionUID = -3531439484732724601L;
 
 	private String name;
+	
+	private LoginUser loginUser;
 
 	public SecurityUser(LoginUser loginUser, Collection<? extends GrantedAuthority> authorities) {
 		// TODO Auto-generated constructor stub
 		super(loginUser.getLoginId(), loginUser.getPassword(), authorities);
+		this.loginUser = loginUser;
 		this.name = loginUser.getName();
 	}
 
