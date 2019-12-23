@@ -29,14 +29,9 @@ public class AjaxAuthenticationProvider extends AbstractUserDetailsAuthenticatio
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 		// TODO Auto-generated method stub
-
-		String presentedPassword = Optional.ofNullable(authentication.getCredentials())
-				.orElseThrow(() -> new BadCredentialsException("Bad credentials")).toString();
-
-		if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-			throw new BadCredentialsException("Bad credentials");
-		}
-
+		Optional.ofNullable(authentication.getCredentials())
+				.filter(password -> passwordEncoder.matches(password.toString(), userDetails.getPassword()))
+				.orElseThrow(() -> new BadCredentialsException("Bad credentials"));
 		LoginUser loginUser = ConvertUtil.convertLoginUser(userDetails);
 		TokenDetails tokenDetails = ConvertUtil.convertTokenDetails(authentication.getDetails());
 		setTokens(tokenDetails, loginUser);

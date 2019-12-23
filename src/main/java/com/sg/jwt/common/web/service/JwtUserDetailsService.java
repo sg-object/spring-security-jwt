@@ -20,13 +20,13 @@ public class JwtUserDetailsService {
 		String refreshToken = details.getRefreshToken();
 		if (refreshToken == null || "".equals(refreshToken)) {
 			// Expired Jwt Token
-			throw new RuntimeException();
+			return null;
 		}
 
 		LoginUser loginUser = userService.getLoginUserByRefreshToken(refreshToken);
 		if (loginUser == null) {
 			// Not Found User & Expired Jwt Token
-			throw new RuntimeException();
+			return null;
 		}
 
 		// Update Token
