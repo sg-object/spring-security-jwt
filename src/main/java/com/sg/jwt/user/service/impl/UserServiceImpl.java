@@ -12,7 +12,7 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		LoginUser user = new LoginUser();
 		user.setLoginId(loginId);
-		user.setPassword("$2a$10$F01fil5fQOQKDLV0Szq.JuUgznfKYnYGxxclEcW0X6d7FPA8PvneK");
+		user.setPassword("$2a$10$aiC.l2gfQzHO..bUDnbhS.3i90lA8V8P0xjbk92CywDhJP3IK5Bcq"); // value is test
 		user.setName("my_name");
 		user.setRoles(new String[] { "ROLE_ADMIN", "ROLE_USER" });
 		return user;
