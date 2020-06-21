@@ -4,6 +4,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.sg.jwt.common.model.SecurityUser;
 import com.sg.jwt.common.util.ConvertUtil;
@@ -20,6 +21,6 @@ public class AjaxUserDetailsService implements UserDetailsService {
 		// TODO Auto-generated method stub
 		return Optional.ofNullable(userService.getLoginUser(username)).filter(user -> user != null)
 				.map(user -> new SecurityUser(user, ConvertUtil.convertAuthorities(user.getRoles())))
-				.orElseThrow(() -> new RuntimeException());
+				.orElseThrow(() -> new UsernameNotFoundException(username));
 	}
 }
