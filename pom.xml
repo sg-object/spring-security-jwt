@@ -18,7 +18,7 @@
 		<jwt-version>0.9.1</jwt-version>
 		<lombok-version>1.16.20</lombok-version>
 		<joda-version>2.10.2</joda-version>
-		<swagger.version>2.9.2</swagger.version>
+		<swagger.version>2.10.0</swagger.version>
 	</properties>
 
 	<dependencies>
