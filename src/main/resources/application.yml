@@ -1,0 +1,6 @@
+jwt:
+  secret-key: 12345678901234567890123456789012
+  issuer: sg
+  expiration:
+    access-token: 300
+    refresh-token: 3600
